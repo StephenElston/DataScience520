@@ -177,7 +177,7 @@ housing = housing.loc[(housing.loc[:,'medSoldPriceSqft'] < 500.0) & (housing.loc
 housing.loc[:,'log_medSoldPriceSqft'] = np.log(housing.loc[:,'medSoldPriceSqft'])
 
 housing_reduced = housing.sample(frac=0.2, axis=0)
-fig, ax = plt.subplots(figsize=(5, 3))
+fig, ax = plt.subplots(figsize=(10, 6))
 ax = sns.scatterplot(x='time_decimal', y='log_medSoldPriceSqft', data=housing_reduced, ax=ax)
 _=ax.set_xlabel('Time', fontsize=14)
 _=ax.set_ylabel('Log Median Sale Price', fontsize=14)
@@ -190,7 +190,7 @@ plt.show()
 ## Use Transparency, Marker Size, Downsampling
 
 ```{python, echo=FALSE}
-fig, ax = plt.subplots(figsize=(5, 3))
+fig, ax = plt.subplots(figsize=(10, 6))
 ax = sns.scatterplot(x='time_decimal', y='log_medSoldPriceSqft', 
                       data=housing_reduced, alpha=0.1, s=2, ax=ax)
 _=ax.set_xlabel('Time', fontsize=14)
@@ -225,7 +225,8 @@ plt.show()
 ## Hexbin Plot   
 
 ```{python, echo=FALSE}
-p = plt.hexbin(housing.loc[:,'time_decimal'], housing.loc[:,'log_medSoldPriceSqft'], gridsize = 50, cmap='YlGnBu')
+fig, ax = plt.subplots(figsize=(10, 6))
+p = ax.hexbin(housing.loc[:,'time_decimal'], housing.loc[:,'log_medSoldPriceSqft'], gridsize = 50, cmap='YlGnBu')
 cb = plt.colorbar(p)
 _=cb.set_label('Number of samples')
 _=plt.xlabel('Time')
@@ -239,9 +240,10 @@ plt.show()
 ## Countour Plot
 
 ```{python, echo=FALSE}
-#_=plt.hexbin(housing.loc[:,'time_decimal'], housing.loc[:,'log_medSoldPriceSqft'], cmap='YlGnBu')
+fig, ax = plt.subplots(figsize=(10, 6))
+_=ax.hexbin(housing.loc[:,'time_decimal'], housing.loc[:,'log_medSoldPriceSqft'], cmap='YlGnBu')
 ###### Replace above with below ############################
-_=sns.jointplot(x='time_decimal', y='log_medSoldPriceSqft', data=housing, kind='kde')
+#_=sns.jointplot(x='time_decimal', y='log_medSoldPriceSqft', data=housing, kind='kde', ax=ax)
 _=plt.xlabel('Time', fontsize=14)
 _=plt.ylabel('Log Median Sale Price', fontsize=14)
 _=plt.title('Log median sale prices vs. time', fontsize=14)
@@ -271,14 +273,13 @@ Sometimes a **creative alternative** is best
 ```{python, echo=FALSE}
 bins = [2008.0 + i * 0.25 for i in range(34)]
 housing.loc[:,'time_bins'] = pd.cut(housing.loc[:,'time_decimal'], bins=bins)
-fig, ax = plt.subplots(figsize=(5, 5))  
+fig, ax = plt.subplots(figsize=(10, 10))  
 fig.subplots_adjust(bottom=0.4)
 _=sns.boxenplot('time_bins', 'log_medSoldPriceSqft', color='lightgray', data=housing)
 _=ax.set_xticklabels(ax.get_xticklabels(), rotation=90, fontsize=6)
 _=ax.set_xlabel('Time', fontsize=6)
 _=ax.set_ylabel('Log Median Sale Price', fontsize=8)
 ```
-
 
 ----------------------------------------------------------------
 
@@ -306,19 +307,7 @@ _=ax.set_ylabel('Log Median Sale Price', fontsize=8)
 
 [seaborn.pydata.org/]: https://seaborn.pydata.org/examples/joint_kde.html
 
-----------------------------------------------------------------
-
-## higher dimensional data
-
-In higher dimensions, things get more challenging, but still manageable **up to a certain point** (usually 5 or so dimensions)          
-- we can use **aesthetics** to add additional dimensions to visualizations, but we quickly run out of elements        
-- we can use **faceting** to break up a plot into many, but having too many plots to look at can be overwhelming         
-
-As dimensionality goes up, we need to rely on more advanced methods, but as we learn later there's no such thing as a free lunch       
-- run a ML algorithms for **dimensionality reduction**        
-- use visualizations such as t-SNEs meant to deal with such situations         
-
-----------------------------------
+-----------------------------------------------------------
 
 ## Organization of Plot Aesthetics
 
@@ -328,9 +317,10 @@ We can organize aesthetics by their effectiveness:
 
 2. **Aesthetics with moderate perceptive power:** useful properties to project data relationships when used sparingly         
 
-3. **Aesthetics with limited perceptive power:** useful within strict limits   
+3. **Aesthetics with limited perceptive power:** useful within strict limits     
 
-------------------------------
+
+-----------------------------------------------------------
 
 ## Properties of Common Aesthetics
 
@@ -349,9 +339,231 @@ We can organize aesthetics by their effectiveness:
 | Angle | Limited | Numeric |
 
 
+```{python, echo=FALSE}
+auto_price = pd.read_csv('../data//AutoPricesClean.csv')
+```
+
+
+-----------------------------------------------------------
+
+## Aspect Ratio
+
+
+- **Aspect ratio** has a significant influence on how a viewer perceives a chart
+- Correct aspect ratio can help highlight important relationships in complex data sets
+- We express aspect ratio as follows:     
+
+$$aspect\ ratio = \frac{width}{height}\ : 1$$
+
+
+- **Banking angle** is key to understanding how the aspect ratio affects perception 
+
+
+-----------------------------------------------------------
+
+## Example of Changing Aspect Ratio
+
+Longest scientific time series is the sunspot count: 
+
+```{python, echo=FALSE}
+sunspots_data = sm.datasets.sunspots.load_pandas().data
+sunspots_data.head()
+```
+
+
+
+-----------------------------------------------------------
+
+## Example of Changing Aspect Ratio
+
+- Example uses data from 1700 to 1980
+- Can you perceive the asymmetry in these sunspot cycles? 
+
+
+```{python, echo=FALSE}
+fig, ax = plt.subplots(figsize=(10, 10))
+fig.subplots_adjust(bottom=0.3)
+ax = sns.lineplot(x='YEAR', y='SUNACTIVITY', data=sunspots_data, ci=None, ax=ax)
+_=ax.set_title('Sunspot time series with 1:1 aspect ratio', fontsize=8)
+_=ax.set_xlabel('Date', fontsize=8)
+_=ax.set_ylabel('Sunspots', fontsize=8)
+_=ax.tick_params(labelsize=8)
+plt.show()
+```
+
+
+-----------------------------------------------------------
+
+## Example of Changing Aspect Ratio
+
+- Notice how changing aspect ratio change perception of the asymmetry?
+
+```{python, echo=FALSE}
+fig, ax = plt.subplots(figsize=(12, 3.0))
+fig.subplots_adjust(top=0.75, bottom=0.4)
+ax = sns.lineplot(x='YEAR', y='SUNACTIVITY', data=sunspots_data, ci=None, ax=ax)
+_=ax.set_title('Sunspot time series with 1:10 aspect ratio') 
+_=ax.set_xlabel('Date')
+_=ax.set_ylabel('Sunspots', fontsize=8)
+_=ax.tick_params(labelsize=8)
+plt.show()
+```
+
+
+-----------------------------------------------------------
+
+## Sequential and Divergent Color Palettes
+
+Use of **color** as an aesthetic in visualization is a complicated subject. 
+
+- color is often used, also often abused 
+- A **qualitative palette** is a palette of individual colors  to display categorical values
+- **Sequential palettes** and **divergent palettes** are a sequence of colors used to display a quantitative variable or ordered categorical variable
+
+
+-------------------------------------------------------------
+
+## Auto Weight by Sequential Color Palette
+
+```{python, echo=FALSE}
+fig, ax = plt.subplots(figsize=(10,10))
+fig.subplots_adjust(top=0.8, bottom=0.2)
+ax = sns.scatterplot(x='city_mpg', y='curb_weight', data=auto_price, 
+                     hue = 'price', palette = 'magma', ax=ax)
+_=ax.set_title('City MPG vs. Weight \nPrice by color') #, fontsize=12)
+_=ax.set_xlabel('City MPG') # , fontsize=12)
+_=ax.set_ylabel('Vehicle Weight') #, fontsize=12) 
+plt.show()
+```
+
+
+-----------------------------------------------------------
+
+## Limits of color
+
+Regardless of the approach there are some significant limitations
+
+- A significant number of people are color blind. Red-green color blindness is most common 
+- Even the best sequential or divergent palettes show only relative value of numeric variables
+- Perception of exact numeric values is difficult, except in special cases
+
+
+-----------------------------------------------------------
+
+## Marker Size
+
+**Marker size** is moderately effective aesthetic useful for quantitative variables
+
+- Used properly, marker size can highlight important trends in complex data sets 
+- But, the viewer can generally perceive relative differences, but not actual values 
+- Small size differences are not preceptable  
+
+
+-----------------------------------------------
+
+## Engine Size by Marker Size and Price by Sequential Color Palette     
+
+```{python, echo=FALSE}
+fig, ax = plt.subplots(figsize=(10, 6))
+ax = sns.scatterplot(x='city_mpg', y='curb_weight', data=auto_price,
+                     hue = 'price', palette = 'magma',
+                     size = 'engine_size', sizes = (50.0, 400.0),
+                     ax=ax)
+_=ax.set_title('City MPG vs. Weight \nPrice by color, engine size by size') #, fontsize=18)
+_=ax.set_xlabel('City MPG') #, fontsize=16)
+_=ax.set_ylabel('Vehicle Weight')# , fontsize=16) 
+plt.show()
+```
+
+-----------------------------------------------------------
+
+## Line Plots and Line Type
+
+**Line plots** connect discrete, ordered, data points by a line
+
+- Can use different line pattern types to differentiate data 
+- Only useful for a limited number of lines on one graph
+- Too many similar line pattern on one plot leads to viewer confusion and poor perception
+
+---------------------------------------------------------------
+
+## Limits of Line Type
+
+```{python, echo=FALSE}
+from math import sqrt
+## Compute some transformed variables
+sunspot_mean = sunspots_data.loc[:,'SUNACTIVITY'].mean()
+y1 = [z/sunspot_mean for z in sunspots_data.loc[:,'SUNACTIVITY']]
+y2 = [log(z + 0.01) for z in y1]
+y3 = [1.0/(z + 0.1) for z in y1]
+y4 = [sqrt(z) for z in y1]
+## Construct the data frame
+df = pd.DataFrame({'Date':sunspots_data.loc[:,'YEAR'],'Normalized':y1, 'Log':y2, 'Inverse':y3, 'Sqrt':y4})
+## Convert the floating point year to a Pandas datetime type
+df.loc[:,'Date'] = pd.to_datetime(df.loc[:,'Date'].astype(int),format='%Y')
+
+styles = [':','-.','--','-'] # Some line styles
+fig = plt.figure(figsize=(10, 10)) # define plot area
+ax = fig.gca() # define axis   
+temp = df[(df['Date'] > '1900-01-01') & (df['Date'] <= '1919-12-01')]
+## Iterate over the time series and line styles to plot
+for col, style in zip(temp[['Normalized','Log','Inverse','Sqrt']], styles):    
+    _=ax.plot(temp.Date, temp[col], linestyle = style, color = 'b', label=(col+'(sunspots)'), linewidth=1)
+## Annotate the plot, including legend
+_=ax.set_title('Line plot of transformed sunspot data \nwith multiple line types') 
+_=ax.set_xlabel('Date') # Set text for the x axis
+_=ax.set_ylabel('Values')# Set text for y axis    
+_=ax.legend()
+plt.show()
+```
+
+-----------------------------------------------------------
+
+## Marker Shape
+
+**Marker shape** is useful for displaying categorical relationships
+
+- This aesthetic is only useful when two conditions are met:
+1. The number of categories is small
+2. Distinctive shape are chosen for the markers
+- Human perception limits the number of shapes humans can perceive well
+
+-------------------------------------------------------
+
+## Aspiration by Marker Shape    
+
+```{python, echo=FALSE}
+fig = plt.figure(figsize=(10, 10)) # define plot area
+fig.subplots_adjust(top=0.7)
+ax=sns.scatterplot(x = 'city_mpg', y = 'curb_weight', 
+                      style = 'aspiration', 
+                      hue = 'fuel_type', 
+                      data=auto_price)
+_=ax.set_title('City MPG vs. Weight \nAspiration by marker shape \nFuel type by color')
+_=ax.set_xlabel('City MPG')
+_=ax.set_ylabel('Vehicle Weight') 
+plt.show()
+```
+
+
+ 
+
+
 ----------------------------------------------------------------
 
-## using aesthetics
+## higher dimensional data
+
+In higher dimensions, things get more challenging, but still manageable **up to a certain point** (usually 5 or so dimensions)          
+- we can use **aesthetics** to add additional dimensions to visualizations, but we quickly run out of elements        
+- we can use **faceting** to break up a plot into many, but having too many plots to look at can be overwhelming         
+
+As dimensionality goes up, we need to rely on more advanced methods, but as we learn later there's no such thing as a free lunch       
+- run a ML algorithms for **dimensionality reduction**        
+- use visualizations such as t-SNEs meant to deal with such situations         
+
+----------------------------------------------------------------
+
+## Aesthetics
 
 - how many dimensions are represented in this plot?
 - be careful not to overdo it with aesthetics
@@ -364,7 +576,7 @@ We can organize aesthetics by their effectiveness:
 
 ----------------------------------------------------------------
 
-## using facet plots
+## Facet plots
 
 - how many dimensions are represented in this plot?
 - faceting is helpful when we have categorical data with a handful of categories
@@ -407,7 +619,7 @@ with sns.plotting_context(font_scale=0.25):
 
 ----------------------------------------------------------------
 
-## correlation matrix
+## Correlation matrix
 
 - this is a visualization of the correlation matrix as a heatmap
 - it can be used to see which variables are correlated with which others
@@ -419,7 +631,7 @@ with sns.plotting_context(font_scale=0.25):
 
 ----------------------------------------------------------------
 
-## scatter plot matrix
+## Scatter plot matrix
 
 - this is the scatter plot version of the correlation matrix
 - color-coding can be used to add a 3rd dimension
@@ -494,6 +706,16 @@ With categorical data, Simpson's paradox can occur when the relative size of the
 ![bg right w:600](../images/anscombes-quartet.jpg)
 
 [wikipedia.com]: https://en.wikipedia.org/wiki/Anscombe%27s_quartet
+
+-----------------------------------------------------------
+
+## Summary
+
+We have  explored these key points       
+- Proper use of plot aesthetics enable projection of multiple dimensions of complex data onto the 2-dimensional plot surface.     
+- All plot aesthetics have limitations which must be understood to use them effectively     
+- The effectiveness of a plot aesthetic varies with the type and the application    
+
 
 ----------------------------------------------------------------
 
