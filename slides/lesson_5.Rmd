@@ -4,7 +4,7 @@
 ---
 title: "Sampling and the Central Limit Theorem"
 author: "Steve Elston"
-date: "01/30/2021"
+date: "02/03/2022"
 output:
   slidy_presentation: default
   pdf_document: default
@@ -92,11 +92,12 @@ $$X(\omega) \rightarrow \mathbb{R}$$
 
 ## today's agenda
 
-- sample vs population
-- sources of uncertainty
-- sampling methods
+- sample vs population    
+- sources of uncertainty    
+- sampling methods    
 - the law of large numbers
-- the Central Limit Theorem
+- the Central Limit Theorem     
+- Bootstrap estimation - Time permitting   
 
 
 -----------------------------------------------------------------
@@ -106,6 +107,8 @@ $$X(\omega) \rightarrow \mathbb{R}$$
 Sampling is a fundamental process in the collection and analysis of data    
 
 - Sampling is important because we almost never have data on a whole population   
+
+- If we had access to the **whole population** we could measure anything we wanted, with only **epistemic uncertainty**  
 
 - Sampling must be randomized to preclude biases    
 
@@ -162,57 +165,6 @@ All statistical methods rely on the use of **randomized unbiased samples**
   - Otherwise, the training data will be biased and not represent the underlying process distribution
   
 ----------------------------------------------------------------
-
-
-## Introduction      
-
-Sampling is a fundamental process in the collection and analysis of data    
-
-- Sampling is important because we almost never have data on a whole population   
-
-- Sampling must be randomized to preclude biases     
-
-- As sample size increases, the standard error of a statistic computed from the sample decreases by the law of large numbers   
-
-- Key points to keep in mind:   
-  - Understanding sampling is essential to ensure data is representative of the entire population   
-  - Use inferences on the sample to say something about the population   
-  - The sample must be randomly drawn from the population  
-
-- Sampling from distribution is the building block of simulation     
-
-- We will take up the topic of resampling later    
-
-
-## Sampling Example
-
-
-| Use Case | Sample | Population |
-|---|---|---|
-| A/B Testing | The users we show either web sites A or B | All possible users, past present and future|   
-|World Cup Soccer | 32 teams which qualify in one season | All national teams in past, present and future years|   
-|Average height of data science students | Students in a data science class | All students taking data science classes world wide|   
-|Tolerances of a manufactured part | Samples taken from production lines | All parts manufactured in the past, present and future |   
-|Numbers of a species in a habitat |Population counts from sampled habitats |All possible habitats in the past, present and future |   
-
-- In several cases it is not only impractical, but impossible to collect data from the entire population  
-
-- We nearly always work with samples, rather than the entire population.    
-
-
-
-## Importance of Random Sampling   
-
-All statistical methods rely on the use of **randomized unbiased samples**    
-
-- Failure to randomized samples violates many key assumptions of statistical models     
-
-- An understanding of proper use of sampling methods is essential to statistical inference      
-
-- Most commonly used machine learning algorithms assume that training data are **unbiased** and **independent and identically distributed (iid)**   
-  - These conditions are only met if training data sample is randomized   
-  - Otherwise, the training data will be biased and not represent the underlying process distribution
-  
 
 
 ## Sampling Distributions   
@@ -455,15 +407,15 @@ There are a great number of possible sampling methods.
 ## Bernoulli Sampling
 
 An example with synthetic data. 
-- Generate 2000 random samples from the standard Normal distribution    
+- Generate 2,000 random samples from the standard Normal distribution    
 - The realizations are randomly divided into 4 groups with $p = [0.1,0.3,0.4,0.2]$     
 - The probability of a sample being in a group is not uniform, and sums to 1.0.  
 
 - Head of the data frame is displayed:
 
-```{python, echo=FALSE}
+```{python}
 nr.seed(345)
-population_size = 10000
+population_size = 2000
 data = pd.DataFrame({"var":nr.normal(size = population_size), 
                      "group":nr.choice(range(4), size= population_size, p = [0.1,0.3,0.4,0.2])})
 data.head(10)
@@ -649,134 +601,258 @@ There are many practical aspects of sampling.
 
 
 
+## Introduction to Resampling and bootstrap
 
-## sources of uncertainty
+“There were others who had forced their way to the top from the lowest rung by the aid of their bootstraps.”
+James Joyce, ‘Ulysses’ 1922
 
-- if we had access to the **whole population** we could measure anything we wanted, and our uncertainty about it is called [epistemic uncertainty]
-- but that's usually not possible, or at least very expensive (such as the census), so in practice, we only have a **sample**, and we hope that the sample is **representative** of the larger population (otherwise we have a **biased sample**)
-- so what we wanted to measure on the population (the **parameter**), we measure it on the sample (the **statistic**): the statistic is an **estimate** of the parameter
-- because samples vary, we now have additional uncertainty, called **statistical uncertainty**, to account for: this is what **statistical inference** is all about
+Bootstrap and re-sampling methods are widely applicable statistical methods   
 
-[epistemic uncertainty]: https://en.wikipedia.org/wiki/Uncertainty_quantification
+- Resampling methods are products of the computer age    
 
-----------------------------------------------------------------
+- Use computational resources unimaginable in the early 20th Century    
 
-![bg w:1000](../images/statistical-inference.jpg)
+- Repeatedly re-sampling the data relaxes some of the assumptions of classical statistical methods
 
-----------------------------------------------------------------
-
-## sampling methods
-
-Suppose the data has $N$ rows, and can be grouped into $K$ subsets      
-
-- **simple random sample:** give me $n$ rows at random ($n < N$)     
-
-- **Bernoulli sample:** for each row of the data, toss a coin with probability $p$ of heads to determine if it should be in the sample or not      
-
-- **stratified sample:** for each of the $K$ subsets, give me $m$ rows at random    
-
-- **cluster sample:** first choose $k < K$ subsets at random, and choose $m$ samples for each of those subsets     
-
-- **systematic sample:** give me every $i$th row of the data     
+- Re-sampling methods draw heavily on the law of large number and the central limit theorem      
 
 
-----------------------------------------------------------------
+## Types of Resampling Methods    
 
-## Discussion
+Commonly used re-sampling methods include:     
 
-You have been charged with finding the share of an American household's budget that goes towards child care
+- **Randomization or Permutation methods:** aka exact tests     
+   - Have a long history; e.g. Fisher’s exact test (1922)     
+   - Became practical for larger data sets in computer era      
+   
+- **Cross validation:** re-sample into multiple folds without replacement     
+   - Leave n out method      
+   - Has origins in the 1950s     
+   - Widely used to evaluate machine learning (ML) models      
+   
+- **Jackknife:** leave one out re-sampling       
+   - Leave one out method   
+   - Early general purpose resampling method   
+   - Has origins in the 1950s    
+   
+- **Bootstrap:** re-sample with equivalent size and replacement - our focus here    
+   - Published by Prof Brad Efron in 1979      
+   
+## General Characteristics of Resampling Methods    
 
-- let's say you conduct a **census**    
-  - what is your population and your **population parameter**?    
-  - what are some examples of **epistemic uncertainty**?    
-  
-- let's say you conduct a **survey** instead    
-  - what is your statistic?    
-  - what kind of **sampling** would you perform?    
-  - what are some **sampling bias** problems you could run into?   
-  - what are some examples of **statistical uncertainty**?    
-  
+General characteristics of resampling methods include     
 
-----------------------------------------------------------------
+- Allow computation of statistics from limited data samples for statistics with continuous derivatives        
 
-## the law of large numbers
+- Repeatedly compute statistics from multiple resamples of dataset     
 
-A fundamental property of statistics (not just statistics the science, but more specifically statistics as measurements derived from **samples**, such as mean, median, IQR, variance, min, max, and so on)     
+- The result converges to the sample distribution of the statistic being computed    
 
-- recall that **statistics** are *estimates* for **parameters**:    
-  - the **sample mean** is an estimate for the true **population mean**    
-  - the **sample variance** is an estimate for the true **population variance**    
-  - and so on, and so forth    
-  
-- the **law of large numbers** states that the *larger* the **sample size**, the *better* the **estimate**: as we increase the sample size the sample becomes more representative of the population (and eventually the sample *is* the population)    
+- Make minimal distributional assumptions, when compared to classical frequentist statistics      
 
-----------------------------------------------------------------
+## Pitfalls of Resampling Methods    
 
-## Discussion
+Re-sampling methods are general and powerful but, there is no magic involved! There are pitfalls! 
 
-Here is an example of the law of large numbers visualized
+- If a sample is biased, the re-sampled statistic estimate based on that sample will be biased    
+   - Results can be no better than the sample you start with  
+   - Example; the bootstrap estimate of mean is the unbiased sample estimate, $\bar{x}$, not the population parameter, $\mu$ 
+   
+- The sample variance and Cis can be no better than the sample distribution allows    
+   - Be suspicious of overly optimistic confidence intervals    
+   - CIs can be optimistically biased        
 
+- Are computationally intensive, but often highly parallelizable   
+
+   
+##  Point Estimates vs. Distribution Estimates    
+
+The goal of frequentist statistics is to compute a point estimate and confidence interval      
+
+- Point estimate is the single most likely value for a statistic     
+   - Confidence interval expresses the uncertainty of the point estimate  
+
+- Confidence interval based on the properties of some assumed probability distribution
+Are there alternatives to this classical frequentist approach?    
+   - Here we focus on bootstrap methods which do not require explicit probability model    
+   - Bootstrap methods let a computer do the work, not the statistician with paper and pencil
+   
+   
+## Bootstrap Distribution    
+
+Rather than computing a point estimate directly, bootstrap methods compute a bootstrap distribution of a statistic    
+
+- Bootstrap distribution is comprised of values of the statistic computed from bootstrap resamples of the original observations (data sample)     
+
+- Computing bootstrap distribution requires **no assumptions about population distribution!**
+  - Bootstrap resampling substitutes computer power for paper and pencil statistician power
+
+- Bootstrap resampling estimates the **bootstrap distribution** of a statistic    
+  - Compute mostly likely point estimate of the statistic, or bootstrap estimate   
+  - The bootstrap confidence interval is computed from the bootstrap distribution    
+
+
+## Overview of the Bootstrap Algorithm    
+
+The bootstrap method follows a simple algorithm. Estimates of the point estimate of a statistic are accumulated by these steps:    
+
+  1. Randomly sample (e.g. Bernoulli sample) n data with replacement from an original data sample of n values; The re-sample is the same size as the original data sample   
+  2. Re-compute the statistic with each resample       
+  3. Repeat steps 1 and 2 to accumulate the required number of bootstrap samples  
+  4. Accumulated bootstrap values form the bootstrap distribution; An estimate of the sample distribution of the statistic     
+  5. The mean of the computed statistic values is the bootstrap point estimate of the statistic       
+
+- By law of large numbers, bootstrap point estimate converges    
+
+- Efrom and Tibshirani (1993) and Efron and Hasti (2016) recommend using at least 200 bootstrap samples for point estimates  
+  - Modern practice is to use 2,000 or more samples 
+
+
+## Overview of the Bootstrap Algorithm    
+
+```{r BootstrapMean, out.width = '90%', fig.cap='Outline of bootstrap resampling algorithm to compute mean', fig.align='center', echo=FALSE}
+knitr::include_graphics(rep("../images/BootstrapMean.png"))
 ```
-n, p, size = 100, 0.5, 10**6
-pop = pd.DataFrame({'x': nr.binomial(n, p, size)})
-n_range = np.arange(1, 10**6, 10000) 
-out = [pop.sample(n = x)['x'].std(axis = 0) for x in n_range]
 
-sns.lineplot(x = n_range[5:], y = out[5:])
+
+## Example; One Sample Bootstrap   
+
+Use sample of standardized scores of highschool students from [UCLA Statistical Consulting](https://stats.idre.ucla.edu/)
+
+```{python, echo=FALSE}
+import pandas as pd
+import numpy as np
+import numpy.random as nr
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+import scipy.stats as ss  
+from math import atan
+
+test_scores = pd.read_csv('../data/hsb2.csv', index_col=0)
+test_scores.head(10)
 ```
 
-- what is the population?     
+## Example; One Sample Bootstrap   
 
-- what is the population parameter we want to estimate?      
+Histogram of the math scores     
 
-- what do the axes on the plot represent?      
+```{python, echo=FALSE}
+def plot_hist(x, xlab, title, bins=20, height=3):   
+       sns.displot(x, bins=bins, kde=True, height=height, aspect=1.4, linewidth=3)
+       plt.axvline(x=np.mean(x), color='red', linestyle='dashed', linewidth=2)
+       plt.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.8)
+       plt.xlabel(xlab)
+       plt.title(title)
 
-![bg right w:600](../images/law-of-large-numbers.jpg)
+math = test_scores.loc[:,'math']
+plot_hist(math, 'Math score', 'Histogram of math scores')
+plt.show()
+```
 
-----------------------------------------------------------------
 
-## [break time]
+## Example; One Sample Bootstrap
 
-----------------------------------------------------------------
+Function to compute single sample bootstrap estimate of statistic    
 
-## the Central Limit Theorem (CLT)
+```{python, evl=FALSE}
+def bootstrap_statistic(x, b, statistic):
+    '''
+    Function Computes b one-sample bootstrap estimates of data x
+    using statistic function.  
+    '''
+    n_samps = len(x)
+    boot_vals = []
+    for _ in range(b):
+        ## The heavy work is done here. The statistic is computed 
+        ## using the bootstrap sample of the observations 
+        boot_vals.append(statistic(nr.choice(x, size=n_samps, replace=True)))
+    boot_estimate = np.mean(boot_vals)
+    print('Bootstrap point estimate = {:6.2f}'.format(boot_estimate))
+    return(boot_estimate, boot_vals)      
+    
+bootstrap_mean_estimate, boot_means = bootstrap_statistic(math, 200, np.mean)
+```
 
-- Law of large number is almost too obvious, but the CLT is more tricky!     
 
-- Law of large number applied to any statistic, but the CLT applies only to the **mean**     
+## Example; One Sample Bootstrap
 
-- Let $X$ be a random variable representing the population     
+Distribution of 200 bootstrap samples of mean estimates    
 
-- $X$ is allowed to have **any distribution** (not limited to normal), and let $\mu$ be your **true population mean** and $\sigma$ the **true population standard deviation**    
+```{python, echo=FALSE}
+def bootstrap_statistic(x, b, statistic):
+    '''
+    Function Computes b one-sample bootstrap estimates of data x
+    using statistic function.  
+    '''
+    n_samps = len(x)
+    boot_vals = []
+    for _ in range(b):
+        ## The heavy work is done here. The statistic is computed 
+        ## using the bootstrap sample of the observations 
+        boot_vals.append(statistic(nr.choice(x, size=n_samps, replace=True)))
+    boot_estimate = np.mean(boot_vals)
+    print('bootstrap point estimate = {:6.2f}'.format(boot_estimate))
+    return(boot_estimate, boot_vals)      
+    
+bootstrap_mean_estimate, boot_means = bootstrap_statistic(math, 200, np.mean)
 
-- Let $\bar X$ be the **sample mean** for a **hypothetical** sample of size $n$ from the population, recall that different samples give different $\bar X$ values, so $\bar X$ is also a random variable     
+plot_hist(boot_means, 'Bootstrap mean values', 'Histogram of bootstrap distribution')
+plt.show()
+```
 
-- The distribution of $\bar X$ is called the **sampling distribution**, and according to CLT 
 
-$$\bar X \sim N(\mu, \frac{\sigma}{\sqrt n})$$
+## Bootstrap Confidence Intervals   
 
-----------------------------------------------------------------
+Distribution of 2000 bootstrap bootstrap confidence intervals?
 
-![bg w:900](../images/central-limit-theorem.jpg)
+- Use percentile method:      
+   1. Define confidence level, eg. 95% or α=0.05    
+   2. Order b bootstrap samples, $s_i$$, by value       
+   3. Lower CI index; $i = b∗α/2$   
+   4. Upper CI index; $i = b∗(1−α/2)$    
+   
+- Percentile method is know to be biased    
+   - Bias correction methods available   
+   
+- Efrom and Tibshirani (1993) and Efron and Hasti (2016) recommend using at least 2,000 bootstrap samples to estimate confidence intervals    
+  - Modern practice is the use 20,000 or more samples
 
-----------------------------------------------------------------
+## Bootstrap Confidence Intervals    
 
-## importance of CLT
+Bootstrap confidence intervals are known to be biased!    
 
-CLT is a sort of guarantee    
+- Often bootstrap CIs are overly optimistic    
 
-- Distribution of the sample mean doesn't depend on the population the sample was drawn from   
+- Bias can be significant for asymmetric distributions    
 
-- Only depends on the population's mean and variance, and on the sample size     
 
-- CLT is the basis for hypothesis testing (next lesson)     
+## Example; One Sample Bootstrap
 
-![bg right w:600](../images/sampling-distribution.jpg)
+Bootstrap distribution of 2000 of mean estimates with confidence intervals     
 
-----------------------------------------------------------------
+```{python, echo=FALSE}
+def bootstrap_cis(boot_samples, alpha=0.05):
+      n = len(boot_samples)
+      sorted = np.sort(boot_samples)
+      index_lci = int(n * alpha / 2)
+      index_uci = int(n * (1 - alpha / 2))
+      print('At alpha = {0:3.2f}, lower and upper bootstrap confidence intervals = {1:6.2f}   {2:6.2f}'.format(alpha, sorted[index_lci], sorted[index_uci]))
+      return(sorted[index_lci], sorted[index_uci])
+    
+bootstrap_mean_estimate, boot_means = bootstrap_statistic(math, 2000, np.mean)
+LCI, UCI = bootstrap_cis(boot_means)
+
+plot_hist(boot_means, 'Bootstrap mean values', 'Histogram of bootstrap distribution')
+plt.axvline(x=LCI, color='red', linestyle='dotted', linewidth=2)
+plt.axvline(x=UCI, color='red', linestyle='dotted', linewidth=2)
+plt.show()
+```
+
+
 
 ## [notebook time]
-### we return to the lecture later
+
 
 ----------------------------------------------------------------
 
