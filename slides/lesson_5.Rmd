@@ -676,6 +676,15 @@ The goal of frequentist statistics is to compute a point estimate and confidence
 Are there alternatives to this classical frequentist approach?    
    - Here we focus on bootstrap methods which do not require explicit probability model    
    - Bootstrap methods let a computer do the work, not the statistician with paper and pencil
+
+
+## Bootstrap Distribution    
+
+Rather than repeatedly resample the population, bootstrapping repeatedly resamples an original sample    
+
+```{r BootstrapDistribution, out.width = '70%', fig.cap='Resampling to estiamte the bootstrap distribution of a statistic', fig.align='center', echo=FALSE}
+knitr::include_graphics(rep("../images/BootstrapDistribution.png"))
+```   
    
    
 ## Bootstrap Distribution    
