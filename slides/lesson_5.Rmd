@@ -164,6 +164,7 @@ All statistical methods rely on the use of **randomized unbiased samples**
   - These conditions only met if training data sample is randomized   
   - Otherwise, the training data will be biased and not represent the underlying process distribution
   
+  
 ----------------------------------------------------------------
 
 

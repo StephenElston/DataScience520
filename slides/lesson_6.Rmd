@@ -9,6 +9,7 @@ output:
   beamer_presentation: default
   html_document:
     df_print: paged
+  ioslides_presentation: default
 ---
 
 ```{r setup, include=FALSE}
@@ -71,6 +72,38 @@ Some applications of statistical inference include:
 - A common machine learning example, classification, uses decision rules determine the most likely class for each case of input values      
 - inference also used to determine the confidence in predictions      
 
+  
+----------------------------------------------------------------
+
+
+## Sampling Distributions   
+
+Sampling of a population is done from an unknown **population distribution**, $\mathcal{F}$      
+
+- Any statistic we compute for the generating process is based on a sample, $\hat{\mathcal{F}}$     
+- The statistic is an approximation, $s(\hat{\mathcal{F}})$ of a **population parameter**   
+   - For example, the mean of the population is $\mu$   
+   - But, sample estiamte is $\bar{x}$   
+
+- If we continue to take random samples from the population and compute estimates of a statistic, we generate a  **sampling distribution**   
+   - Hypothetical concept of the sampling distribution is a foundation of **frequentist statistics**
+   - Example, if we continue generating samples and computing the sample means, $\bar{x}_i$ for the ith sample   
+
+- **Frequentist statistics** built on the idea of randomly resampling the population distribution and recomputing a statistic         
+   - In the frequentist world, statistical inferences are performed on the sampling distribution    
+   - Sampling process must not bias the estimates of the statistic
+
+ 
+ 
+## Sampling Distributions   
+
+Sampling of a population is done from an unknown **population distribution**, $\mathcal{F}$      
+
+- Any statistic we compute for the generating process is an approximation for the population, $s(\hat{\mathcal{F}})$  
+
+```{r Sampling, out.width = '60%', fig.cap='Sampling distribution of unknown population parameter', fig.align='center', echo=FALSE}
+knitr::include_graphics(rep("../images/SamplingDistribuion.png"))
+```
 
 
 ## Confidence Intervals; the Key to Inference     
@@ -91,11 +124,11 @@ Can understand confidence intervals by looking at the $\alpha$ and $1 - \alpha$ 
 
 - Confidence interval corresponds to the span of the distribution between quantiles    
 
-- Express a confidence interval for a random variable, $\mathbf{x}$, in terms of the probability as:  
+- Express a 2-sided confidence interval for a random variable, $\mathbf{x}$, in terms of the probability as:  
 
 $$1-2 \alpha = P \Big( Lower\ CI \le \mathbf{x} \le Upper\ CI \Big)$$
 
-- Alternatively:    
+- Alternatively for one-sided CIs:    
 
 $$\alpha  = P(x \ge Upper\ CI)\ \\ and \\\ 1 - \alpha = P(x \le Lower\ CI)$$
 
@@ -175,20 +208,6 @@ Where,
 - $n$ is the number of samples.   
 
 
-## One-Sided Confidence Intervals    
-
-Many situations where a one-sided confidence interval is useful    
-
-- Characterize uncertainty of maximum or minimum value of a random variable   
-
-- For the upper tail of the distribution, the confidence interval is defined:   
-
-$$1 - \alpha = P\big( -\infty \le x \le \alpha \big)$$
-
-- For the lower tail of a random variable, the confidence interval is defined:      
-
-$$\alpha = P\big( -\alpha\le x \le \infty \big)$$
-
 
 ## Interpretation of Confidence Intervals      
 
@@ -196,12 +215,12 @@ How can we interpret the confidence interval?
 
 - Confidence intervals are with respect to the the sampling distribution of a statistic $s(\hat{\mathcal{F}})$  
 
-- Two-sided interval, $1 - 2 \alpha$, represent uncertainty in the sample statistic values computed from repeated samples of the population,$\hat{\mathcal{F}}_i$    
+- Two-sided interval, $1 - 2 \alpha$, represent uncertainty in the sample statistic values computed from repeated samples of the population, $\hat{\mathcal{F}}_i$    
 
 - Confidence intervals do not indicate the probability  $s(\hat{\mathcal{F}})$ is in a range
 
 
-```{r Sampling, out.width = '50%', fig.cap='Sampling distribution of unknown population parameter', fig.align='center', echo=FALSE}
+```{r Sampling_2, out.width = '50%', fig.cap='Sampling distribution of unknown population parameter', fig.align='center', echo=FALSE}
 knitr::include_graphics(rep("../images/SamplingDistribuion.png"))
 ```
 
@@ -211,20 +230,17 @@ knitr::include_graphics(rep("../images/SamplingDistribuion.png"))
 ## Test of Hypothesis
 
 - a **test of hypothesis** is made of two statements, each being an educated guess about the true value of the **parameter(s)** of one or several populations
-  - the **null hypothesis** $H_0$ usually says something "uninteresting" and they suggest a points toward some status quo, such as
+- the **null hypothesis** $H_0$ usually says something "uninteresting" and they suggest a points toward some status quo, such as
     - the effect of this drug is not significantly than the control in reducing headaches     
-    - these two groups came from the same underlying distribution      
-    
+    - these two groups came from the same underlying distribution     
 - the **alternative hypotheses** $H_1$ is a competing statement that suggest something to the contrary and suggests some interesting **effect**, such as    
-    - a drug is significnly difference from a **control**     
-    - these two groups came from different underlying distributions    
+    - a drug is significantly difference from a **control**     
+    - Yield of wheat is significantly different between two seed types    
     
 - There can be many alternative hypotheses    
   - There is a significant difference in means
   - Difference in means is greater    
   - Difference in means is less
-  
-- Can be a very large number of alternatives   
   - Can be an infinite number; e.g. alternative distributions
 
 
@@ -239,20 +255,6 @@ knitr::include_graphics(rep("../images/SamplingDistribuion.png"))
 | distribution | $\mu, \sigma$ | $X \sim N(\mu, \sigma)$ | N/A | $X \not \sim N(\mu, \sigma)$ |
 | correlation | $\rho$ | $\rho(X,Y) = 0$ | $\rho(X,Y) > 0$ | $\rho(X,Y) \ne 0$ |
 
-----------------------------------------------------------------
-
-## Why we do hypothesis testing
-
-1. We can think of $H_0$ and $H_1$ as two assumptions *about the population* opposed to each other and competing for attention
-2. Under the assumption made by $H_0$, we expect the statistic(s) we collect to follow a certain distribution (or some other condition)
-3. We can then collect a sample of data (our **evidence**), compute the statistic(s) and ask what the probability is to get the statistic(s) we got if $H_0$'s assumptions really hold, we call this probability the **p-value**
-4. we compare the p-value to some pre-determined threshold $\alpha$, also called the **type-I error** threshold, usually $\alpha = 0.01$ or $\alpha = 0.05$
-5. if p-value $< \alpha$ we **reject $H_0$**, otherwise we **fail to reject $H_0$** and conclude that $H_0$ still holds    
-  - We avoid saying that we "accept" $H_0$
-  - p-value $< \alpha$ does **not** mean we accept the alternative
-  - May be able to and conclude $H_a$ in certain cases  
-
-
 ------------------------------------------------------------
 
 ## Hypothesis testing steps
@@ -265,11 +267,26 @@ The steps required to perform a formal two-sample hypothesis test
   - Typically stated in terms of a **treatment group** vs. **control group**    
   - Treatment is the factor that differentiates the population     
   
-- Decide on a significance level (probability cutoff): e.g. 0.1, 0.05, and 0.01    
+- Decide on a significance level (probability cutoff or **Type I error threshold**): e.g. 0.1, 0.05, and 0.01    
 
-- Data is collected for the different treatments     
+- Data is collected for the different treatments 
+  - Treatment used for comparison is the **control**
 
 - Compute the **test statistic** and evaluate based on the cutoff value     
+
+---------------------------------------------------------------
+
+## Hypothesis testing steps
+
+- Think of $H_0$ and $H_1$ as two assumptions *about the population* opposed to each other and competing for attention
+- Under the assumption of $H_0$, we expect the statistic(s) we collect to follow a certain distribution (or some other condition)
+3. Collect a sample of data (our **evidence**), compute the statistic(s) and probability to get the statistic(s) if $H_0$'s holds, or the **p-value**
+4. Compare the p-value to the pre-determined threshold $\alpha$, or **type-I error** threshold, usually $\alpha = 0.01$ or $\alpha = 0.05$
+5. If p-value $< \alpha$ we **reject $H_0$**, otherwise we **fail to reject $H_0$**   
+  - We avoid saying that we "accept" $H_0$
+  - p-value $< \alpha$ does **not** mean we accept the alternative
+  - May be able tox conclude $H_a$ in certain cases  
+
 
 ------------------------------------------------------------
 
@@ -283,7 +300,7 @@ Test statistic used a a **decision rule**
   
 - Failing to rejecting the null hypothesis can occur for several reasons       
   - The alternative hypothesis was false to begin with     
-  - There is not enough evidence for the **size of the effect**    
+  - There is not enough evidence for the **effect size**    
   
 - Roughly speaking, the effect size is the difference of the test statistic in populations under the different treatments   
 
@@ -388,7 +405,7 @@ The **power of a test** is often neglected, leading to poor test results
 
 $$power = P(reject\ H_0| when\ H_a\ is\ true)$$
 
-- In pain language, the **power is the probability of getting a positive result when the null hypothesis is not true**      
+- In pain language, the **power is the probability of not rejecting $H_\alpha$$ when we should do so**      
   - Conversely, a test with **insufficient power will not detect a real effect**     
   - Clearly, we want the most powerful test possible    
 
@@ -417,13 +434,13 @@ Consider the power for the two sample t-test for the difference of means which d
 
 When computing power, you can ask several questions        
 
-1. Most typically, determine how big a sample is required to have high probability of rejecting the null hypothesis given the expected effect size     
-  - Often, a power level of 0.8 is considered adequate   
-  - But, power level of 0.8 leaves a 1 in 5 chance of not detecting the desired effect      
+- Typically, determine how big a sample is required to have high probability of rejecting the null hypothesis given the expected effect size     
+    - Often, a power level of 0.8 is considered adequate   
+    - But, power level of 0.8 leaves a 1 in 5 chance of not detecting the desired effect      
   
-2. Or, determine how big an effect is required for a fixed sample size to have hight probabiliyt of rejecting the null hypothesis    
+- Or, determine how big an effect is required for a fixed sample size to have hight probability of rejecting the null hypothesis    
 
-3. Finally, determine the how different cutoff values change the probability of detecting an effect.   
+- Finally, determine the how different cutoff values change the probability of detecting an effect.   
 
 ------------------------------------------------------------
 
