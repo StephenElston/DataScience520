@@ -72,6 +72,15 @@ Some applications of statistical inference include:
 - A common machine learning example, classification, uses decision rules determine the most likely class for each case of input values      
 - inference also used to determine the confidence in predictions      
 
+----------------------------------------------------------------
+
+## different kinds of tests
+
+- we may have a different test if we have **one sample**, **two samples** or more
+- a **parametric** test usually makes a set of assumptions about the distribution of the data, but if certain important assumptions don't hold, we can look for a **non-parametric** tests
+- which test to use also depends on whether the variable are **discrete or continuous**, or **numeric or categorical**, **ordinal, interval, or ratio**
+- there are tests used for comparing **effect size** (averages), for comparing **variance**, for **goodness of fit** (proportions), for checking whether data follows a particular **distribution**, or if data points appear to be **independent** or not
+
   
 ----------------------------------------------------------------
 
@@ -442,6 +451,47 @@ When computing power, you can ask several questions
 
 - Finally, determine the how different cutoff values change the probability of detecting an effect.   
 
+
+----------------------------------------------------------------
+
+## Power of Tests
+
+Example: power of t-test controlled by sample size, effect size and cut-off value
+
+- Hold $\alpha=0.5$ and effect size = $0.1$ constant   
+
+- Determine minimum sample size: 
+
+<img src="../images/Power-SampleSize.JPG" alt="Drawing" style="width:700px; height:500px"/>
+<center>Power vs. sample size for t-test</center>
+
+
+----------------------------------------------------------------
+
+## Power of Tests
+
+Example: power of t-test controlled by sample size, effect size and cut-off value
+
+- Hold $\alpha=0.5$ and sample size $= 1000$ constant   
+
+- Determine minimum detectable effect size: 
+
+<img src="../images/Power_DifferenceOfMeans.JPG" alt="Drawing" style="width:700px; height:500px"/>
+<center>Power vs. effect size for t-test</center>
+
+----------------------------------------------------------------
+
+## Power of Tests
+
+Example: power of t-test controlled by sample size, effect size and cut-off value
+
+- Hold sample size $=1000$ and effect size $= 0.1$ constant   
+
+- Determine cut-off limits, $\alpha$, or significance level: 
+
+<img src="../images/Power_SignificanceLevel.JPG" alt="Drawing" style="width:700px; height:500px"/>
+<center>Power vs. significance level for t-test</center>
+
 ------------------------------------------------------------
 
 ## Hypothesis Tests on Counts
@@ -634,31 +684,7 @@ knitr::include_graphics(rep("../images/KS_Statistic.png"))
 
 
 
-----------------------------------------------------------------
 
-## [break time]
-
-----------------------------------------------------------------
-
-## [discussion]
-
-Many websites list different tests of hypothesis and when to use them. Here are two examples:
-
-- [List of hypothesis tests (UCLA)](https://stats.idre.ucla.edu/spss/whatstat/what-statistical-analysis-should-i-usestatistical-analyses-using-spss/)
-- [List of hypothesis tests (machinelearningmastery.com)](https://machinelearningmastery.com/statistical-hypothesis-tests-in-python-cheat-sheet/)
-
-Take a moment to visit one of the above sites and look at the different tests. 
-- What kind of parameter is being tested in each case? 
-- Can you spot the null and alternative hypotheses?
-
-----------------------------------------------------------------
-
-## different kinds of tests
-
-- we may have a different test if we have **one sample**, **two samples** or more
-- a **parametric** test usually makes a set of assumptions about the distribution of the data, but if certain important assumptions don't hold, we can look for a **non-parametric** tests
-- which test to use also depends on whether the variable are **discrete or continuous**, or **numeric or categorical**, **ordinal, interval, or ratio**
-- there are tests used for comparing **effect size** (averages), for comparing **variance**, for **goodness of fit** (proportions), for checking whether data follows a particular **distribution**, or if data points appear to be **independent** or not
 
 ----------------------------------------------------------------
 
@@ -670,6 +696,30 @@ Take a moment to visit one of the above sites and look at the different tests.
 - we can use **power analysis** to determine the appropriate **sample size** given the expected the expected **effect size**, or vice versa
 - we compute power differently depending on the test
 
+----------------------------------------------------------------
+
+## multiple hypotheses
+
+Testing multiple hypothises simultaiously is a slippery slope   
+
+- Example, what if we set the Type I error rate or signicicance level at $\alpha=0.05$
+
+- Have about 1 in 20 chance of a **false positive**   
+
+- With just 20 variables there are ${n \choose k} = {20 \choose 2} = 190$ pair-wise comparison  
+
+- Expect about 9-10 false positives! 
+
+----------------------------------------------------------------
+
+## P-Value mining   
+
+Common erroneous technique is to sample data until desired answer is reached   
+
+**See Example Notebook**
+
+
+---------------------------------------------------------
 
 ## Summary       
 
